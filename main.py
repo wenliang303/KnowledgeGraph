@@ -32,7 +32,7 @@ def get_name(name):
 	name = name.replace('\u4dae',"龚")
 	return name
 
-def create_iexecutive_executive_stock():
+def create_executive_executive_stock():
 
 	target_dir = os.path.join(os.path.abspath("."),'exe_member',"target")
 	file_list = os.listdir(target_dir)
@@ -45,8 +45,11 @@ def create_iexecutive_executive_stock():
 	person_id= 1
 	for f in file_list:
 		file = os.path.join(target_dir,f)
-
+		if not f.endswith("html"):
+			continue
+			 
 		htmlfile = open(file, 'r')
+
 		htmlhandle = htmlfile.read()
 		soup = BeautifulSoup(htmlhandle, "html.parser")
 
@@ -90,5 +93,6 @@ def create_iexecutive_executive_stock():
 	executive_stock.close()
 
 if __name__ == "__main__":
-	create_iexecutive_executive_stock()
+	get_pre_of_industry_concept()
+	create_executive_executive_stock()
 

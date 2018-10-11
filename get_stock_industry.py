@@ -22,33 +22,6 @@ def get_industryID_dict(content_list):
 			g_industry_id +=1
 	return out_dict
 
-def create_stock_pre_csv(content_list):
-	stock   = open('stock_pre.csv','w')
-	stock.write("stockID:ID,stock_name,:LABEL\n")
-	
-	# delete repeate
-	stock_dict = dict()
-	for item in content_list:
-
-		if "code" in item:
-			continue
-
-		tmp_list = item.strip().split(',')
-		code = tmp_list[1]
-		company_name = tmp_list[2]
-		if code not in stock_dict:
-			stock_dict[code]=company_name
-
-	for code in stock_dict:
-
-		company_name = stock_dict[code]
-		if "ST" in company_name:
-			stock.write(code+","+company_name+",COMPANY;ST\n")
-		else:
-			stock.write(code+","+company_name+",COMPANY\n")
-
-	stock.close()
-
 def create_industry_csv(industryID_dict):
 	industry = open('industry.csv','w')
 	industry.write("industryID:ID,industry_name,:LABEL\n")
