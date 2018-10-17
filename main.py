@@ -32,10 +32,22 @@ def get_name(name):
 	name = name.replace('\u4dae',"龚")
 	return name
 
+def get_person_id(cp_dict,name, age, sex):
+
+	for code in cp_dict:
+		for per in cp_dict[code]:
+
+			if per[1] == name and per[2] == age and per[3] == sex:#already exists person
+				return per[0] #person_id
+
+	return -1
+
 def create_executive_executive_stock():
 
 	target_dir = os.path.join(os.path.abspath("."),'exe_member',"target")
 	file_list = os.listdir(target_dir)
+	code_person_dict= dict()#{code:[[id,name,age,sex]]}
+
 	executive=open('executive.csv','w')
 	executive.write("persionID:ID,person_name,age:int,sex,:LABEL\n")
 
@@ -49,7 +61,6 @@ def create_executive_executive_stock():
 			continue
 			 
 		htmlfile = open(file, 'r')
-
 		htmlhandle = htmlfile.read()
 		soup = BeautifulSoup(htmlhandle, "html.parser")
 
@@ -79,18 +90,31 @@ def create_executive_executive_stock():
 				sex="None"
 
 			age = get_age(tmp_list, sex)
-			executive.write(str(person_id)+","+name+","+age+","+sex+",person\n")
+
+			duty_list=list()
 			#print(name, age, code, duty)
 			if "," in duty:
 				duty_list = duty.split(',')
-				for dt in duty_list:
-					executive_stock.write(str(person_id)+","+code+","+dt.strip()+"\n")
 			else:
-				executive_stock.write(str(person_id)+","+code+","+duty+"\n")
-			person_id +=1
+				duty_list.append(duty)
+
+			tmp_id = get_person_id(code_person_dict, name, age, sex)
+			if tmp_id == -1 :# person not exists
+				tmp_id = person_id
+				person_id +=1
+				executive.write(str(tmp_id)+","+name+","+age+","+sex+",person\n")
+
+			if code not in code_person_dict:
+				code_person_dict[code] = list()
+
+			code_person_dict[code].append([tmp_id,name, age, sex])
+
+			for dt in duty_list:
+				executive_stock.write(str(tmp_id)+","+code+","+dt.strip()+"\n")
 
 	executive.close()
 	executive_stock.close()
+
 
 if __name__ == "__main__":
 	get_pre_of_industry_concept()
